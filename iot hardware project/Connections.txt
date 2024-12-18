@@ -1,0 +1,89 @@
+// Pin definitions for the IR sensor array
+const int irLeftPin = 2;    // Pin connected to the left sensor
+const int irCenterPin = 3;  // Pin connected to the center sensor
+const int irRightPin = 4;   // Pin connected to the right sensor
+
+// Pin definitions for the ultrasonic sensor
+#define TRIG_PIN 7  // Trigger pin for the ultrasonic sensor
+#define ECHO_PIN 8  // Echo pin for the ultrasonic sensor
+
+void setup() {
+  // Initialize serial communication for debugging
+  Serial.begin(9600);
+
+  // Set the IR sensor pins as input
+  pinMode(irLeftPin, INPUT);
+  pinMode(irCenterPin, INPUT);
+  pinMode(irRightPin, INPUT);
+  
+  // Set up the ultrasonic sensor pins
+  pinMode(TRIG_PIN, OUTPUT); // Set TRIG pin as output
+  pinMode(ECHO_PIN, INPUT);  // Set ECHO pin as input
+}
+
+void loop() {
+  // Read the values from the IR sensors
+  int leftSensorValue = digitalRead(irLeftPin);
+  int centerSensorValue = digitalRead(irCenterPin);
+  int rightSensorValue = digitalRead(irRightPin);
+
+  // Initialize distance variable
+  long distance;
+
+  // Measure distance using the ultrasonic sensor
+  distance = measureDistance();
+
+  // Check where the object is detected
+  if (leftSensorValue == HIGH) {
+    Serial.println("Object detected.");
+  } else if (centerSensorValue == HIGH) {
+    Serial.println("Object detected.");
+  } else if (rightSensorValue == HIGH) {
+    Serial.println("Object detected.");
+  } else {
+    Serial.println("No object detected.");
+  }
+
+  // Print the measured distance
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Small delay to avoid spamming the serial monitor
+  delay(500);
+}
+
+// Function to measure distance using ultrasonic sensor
+long measureDistance() {
+  long duration;
+
+  // Clear the TRIG_PIN
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+
+  // Set the TRIG_PIN HIGH for 10 microseconds
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  // Read the ECHO_PIN and get the duration of the pulse
+  duration = pulseIn(ECHO_PIN, HIGH);
+
+  // Calculate the distance in cm
+  long distance = duration * 0.034 / 2;
+
+  return distance; // Return the distance
+}
+
+// ir sensor array
+VCC (Power): Connect to Arduino's 5V.
+GND (Ground): Connect to Arduino's GND.
+Left Sensor (D1): Connect to Arduino digital pin 2.
+Center Sensor (D4 or D5): Connect to Arduino digital pin 3.
+Right Sensor (D7): Connect to Arduino digital pin 4.
+
+// ultra sonic sensor
+VCC (Ultrasonic Sensor) → 5V (Arduino)
+GND (Ultrasonic Sensor) → GND (Arduino)
+TRIG (Ultrasonic Sensor) → Pin 7 (Arduino)
+ECHO (Ultrasonic Sensor) → Pin 8 (Arduino)
